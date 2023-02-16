@@ -1,5 +1,5 @@
 import java.util.UUID
 
 abstract class Vehicle {
-    val vehicleNumber: UUID = UUID.randomUUID()
+    val vehicleNumber: VehicleNumber = VehicleNumber(UUID.randomUUID())
 }
