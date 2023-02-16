@@ -1,3 +1,5 @@
+import utils.Counter
+
 @JvmInline
 value class ParkingSpotNumber(val value: Long) {
     companion object {

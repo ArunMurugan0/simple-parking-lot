@@ -1,3 +1,5 @@
+import utils.Counter
+
 @JvmInline
 value class TicketNumber(val value: Long) {
     companion object {
