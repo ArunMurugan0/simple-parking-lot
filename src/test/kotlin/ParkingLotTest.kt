@@ -2,7 +2,11 @@ import exceptions.ParkingSpotNotAvailableException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import java.time.LocalDateTime
+import java.util.stream.Stream
 
 class ParkingLotTest {
 
@@ -27,6 +31,44 @@ class ParkingLotTest {
 
         assertThrows<ParkingSpotNotAvailableException> {
             parkingLot.generateParkingTicket(Car(), LocalDateTime.now())
+        }
+    }
+
+    @MethodSource("getFeeCalculationTestCases")
+    @ParameterizedTest
+    fun ` `(entryDateTime: LocalDateTime, exitDateTime: LocalDateTime, vehicle: Vehicle, expectedParkingFee: UInt) {
+        val parkingLot = ParkingLot(10U, hourlyParkingFeeRate = 10U)
+
+        val ticket = parkingLot.generateParkingTicket(vehicle, entryDateTime = entryDateTime)
+        val receipt = parkingLot.generateParkingFeeReceipt(vehicle, ticket.ticketNumber, exitDateTime)
+
+        assertEquals(expectedParkingFee, receipt.fee)
+    }
+
+
+    companion object {
+        @JvmStatic
+        fun getFeeCalculationTestCases(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(
+                    LocalDateTime.of(2022, 9, 11, 11, 30),
+                    LocalDateTime.of(2022, 9, 11, 13, 30),
+                    Car(),
+                    20
+                ),
+                Arguments.of(
+                    LocalDateTime.of(2022, 11, 11, 0, 0),
+                    LocalDateTime.of(2022, 11, 12, 0, 0),
+                    Car(),
+                    240
+                ),
+                Arguments.of(
+                    LocalDateTime.of(2022, 9, 11, 11, 30),
+                    LocalDateTime.of(2022, 9, 11, 16, 15),
+                    Car(),
+                    40
+                ),
+            )
         }
     }
 }
