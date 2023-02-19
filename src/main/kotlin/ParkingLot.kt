@@ -1,5 +1,4 @@
 import exceptions.ParkingSpotNotAvailableException
-import exceptions.TicketNotFoundException
 import utils.DateUtils
 import java.time.LocalDateTime
 
@@ -24,9 +23,8 @@ class ParkingLot(parkingSpotCount: UInt, private val hourlyParkingFeeRate: UInt)
         return ticket
     }
 
-    fun generateParkingFeeReceipt(vehicle: Vehicle, ticketNumber: TicketNumber, exitDateTime: LocalDateTime): Receipt {
-        val ticket = tickets.findTicketOrNull(ticketNumber)
-            ?: throw TicketNotFoundException()
+    fun generateParkingFeeReceipt(v1: Vehicle, unParkV2: Vehicle, unParkParkedCarForTicket: TicketNumber, exitDateTime: LocalDateTime): Receipt {
+        val ticket = tickets.findTicketOrNull(unParkParkedCarForTicket)!!
 
         val parkingSpot = parkingSpots.getByParkingSpotNumberOrNull(ticket.parkingSpotNumber)!!
         parkingSpot.setAvailable()
