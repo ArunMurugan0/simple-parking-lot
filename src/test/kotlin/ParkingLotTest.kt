@@ -36,7 +36,7 @@ class ParkingLotTest {
 
     @MethodSource("getFeeCalculationTestCases")
     @ParameterizedTest
-    fun ` `(entryDateTime: LocalDateTime, exitDateTime: LocalDateTime, vehicle: Vehicle, expectedParkingFee: UInt) {
+    fun `it should calculate fee based on entry and exit datetime`(entryDateTime: LocalDateTime, exitDateTime: LocalDateTime, vehicle: Vehicle, expectedParkingFee: UInt) {
         val parkingLot = ParkingLot(10U, hourlyParkingFeeRate = 10U)
 
         val ticket = parkingLot.generateParkingTicket(vehicle, entryDateTime = entryDateTime)
