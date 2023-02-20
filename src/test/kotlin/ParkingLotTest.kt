@@ -7,24 +7,28 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.time.LocalDateTime
 import java.util.stream.Stream
+import kotlin.test.assertIs
 
 class ParkingLotTest {
 
     @Test
     fun `It should generate Ticket`() {
         val car = Car()
-        val parkingLot = ParkingLot(2U, hourlyParkingFeeRate = 10U)
+        val parkingCapacityConfig = ParkingCapacityConfig(parkingCapacityForEachFloor = listOf(1U, 2U))
+        val parkingLot = ParkingLot(parkingCapacityConfig, hourlyParkingFeeRate = 10U)
 
         val entryDateTime = LocalDateTime.now()
         val ticket = parkingLot.generateParkingTicket(car, entryDateTime)
 
+        assertIs<UInt>(ticket.floorNumber)
         assertEquals(car.vehicleNumber, ticket.vehicleNumber)
         assertEquals(entryDateTime, ticket.entryDateTime)
     }
 
     @Test
     fun `It should throw exception if there is no parking spot available`() {
-        val parkingLot = ParkingLot(3U, hourlyParkingFeeRate = 10U)
+        val parkingCapacityConfig = ParkingCapacityConfig(parkingCapacityForEachFloor = listOf(3U))
+        val parkingLot = ParkingLot(parkingCapacityConfig, hourlyParkingFeeRate = 10U)
         parkingLot.generateParkingTicket(Car(), LocalDateTime.now())
         parkingLot.generateParkingTicket(Car(), LocalDateTime.now())
         parkingLot.generateParkingTicket(Car(), LocalDateTime.now())
@@ -37,7 +41,8 @@ class ParkingLotTest {
     @MethodSource("getFeeCalculationTestCases")
     @ParameterizedTest
     fun `it should calculate fee based on entry and exit datetime`(entryDateTime: LocalDateTime, exitDateTime: LocalDateTime, vehicle: Vehicle, expectedParkingFee: UInt) {
-        val parkingLot = ParkingLot(10U, hourlyParkingFeeRate = 10U)
+        val parkingCapacityConfig = ParkingCapacityConfig(parkingCapacityForEachFloor = listOf(10U))
+        val parkingLot = ParkingLot(parkingCapacityConfig, hourlyParkingFeeRate = 10U)
 
         val ticket = parkingLot.generateParkingTicket(vehicle, entryDateTime = entryDateTime)
         val receipt = parkingLot.generateParkingFeeReceipt(vehicle, ticket.ticketNumber, exitDateTime)

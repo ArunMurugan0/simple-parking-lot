@@ -1,4 +1,5 @@
 class ParkingSpot(
+    val floorNumber: UInt,
     private var status: ParkingSpotStatus = ParkingSpotStatus.AVAILABLE
 ) {
     val parkingSpotNumber = ParkingSpotNumber()

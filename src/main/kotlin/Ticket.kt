@@ -6,4 +6,6 @@ data class Ticket(val vehicleNumber: VehicleNumber, private val parkingSpot: Par
     val parkingSpotNumber: ParkingSpotNumber
         get() = parkingSpot.parkingSpotNumber
 
+    val floorNumber: UInt
+        get() = parkingSpot.floorNumber
 }

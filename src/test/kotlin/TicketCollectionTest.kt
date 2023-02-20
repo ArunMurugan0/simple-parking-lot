@@ -9,12 +9,12 @@ class TicketCollectionTest {
     fun `it should be able to access all tickets that are added`() {
         val ticketOne =
             Ticket(
-                parkingSpot = ParkingSpot(),
+                parkingSpot = ParkingSpot(floorNumber = 1U),
                 vehicleNumber = Car().vehicleNumber,
                 entryDateTime = LocalDateTime.now()
             )
         val ticketTwo = Ticket(
-            parkingSpot = ParkingSpot(),
+            parkingSpot = ParkingSpot(floorNumber = 1U),
             vehicleNumber = Car().vehicleNumber,
             entryDateTime = LocalDateTime.now()
         )
@@ -31,7 +31,7 @@ class TicketCollectionTest {
     fun `it should return null when trying retrieve if the ticket is not found`() {
         val ticketOne =
             Ticket(
-                parkingSpot = ParkingSpot(),
+                parkingSpot = ParkingSpot(floorNumber = 1U),
                 vehicleNumber = Car().vehicleNumber,
                 entryDateTime = LocalDateTime.now()
             )
@@ -45,7 +45,7 @@ class TicketCollectionTest {
     fun `it should remove the ticket from the collection`() {
         val ticketOne =
             Ticket(
-                parkingSpot = ParkingSpot(),
+                parkingSpot = ParkingSpot(floorNumber = 1U),
                 vehicleNumber = Car().vehicleNumber,
                 entryDateTime = LocalDateTime.now()
             )
