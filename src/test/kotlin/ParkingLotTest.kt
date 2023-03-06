@@ -15,7 +15,7 @@ class ParkingLotTest {
     fun `It should generate Ticket`() {
         val car = Car()
         val parkingCapacityConfig = ParkingCapacityConfig(parkingCapacityForEachFloor = listOf(1U, 2U))
-        val parkingLot = ParkingLot(parkingCapacityConfig, hourlyParkingFeeRate = 10U)
+        val parkingLot = ParkingLot(parkingCapacityConfig, MallFeeStrategy(hourlyParkingFeeRate = 10U))
 
         val entryDateTime = LocalDateTime.now()
         val ticket = parkingLot.generateParkingTicket(car, entryDateTime)
@@ -28,7 +28,7 @@ class ParkingLotTest {
     @Test
     fun `It should throw exception if there is no parking spot available`() {
         val parkingCapacityConfig = ParkingCapacityConfig(parkingCapacityForEachFloor = listOf(3U))
-        val parkingLot = ParkingLot(parkingCapacityConfig, hourlyParkingFeeRate = 10U)
+        val parkingLot = ParkingLot(parkingCapacityConfig, MallFeeStrategy(hourlyParkingFeeRate = 10U))
         parkingLot.generateParkingTicket(Car(), LocalDateTime.now())
         parkingLot.generateParkingTicket(Car(), LocalDateTime.now())
         parkingLot.generateParkingTicket(Car(), LocalDateTime.now())
@@ -42,7 +42,7 @@ class ParkingLotTest {
     @ParameterizedTest
     fun `it should calculate fee based on entry and exit datetime`(entryDateTime: LocalDateTime, exitDateTime: LocalDateTime, vehicle: Vehicle, expectedParkingFee: UInt) {
         val parkingCapacityConfig = ParkingCapacityConfig(parkingCapacityForEachFloor = listOf(10U))
-        val parkingLot = ParkingLot(parkingCapacityConfig, hourlyParkingFeeRate = 10U)
+        val parkingLot = ParkingLot(parkingCapacityConfig, MallFeeStrategy(hourlyParkingFeeRate = 10U))
 
         val ticket = parkingLot.generateParkingTicket(vehicle, entryDateTime = entryDateTime)
         val receipt = parkingLot.generateParkingFeeReceipt(vehicle, ticket.ticketNumber, exitDateTime)

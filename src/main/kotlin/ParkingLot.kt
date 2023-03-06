@@ -3,14 +3,10 @@ import exceptions.TicketNotFoundException
 import utils.DateUtils
 import java.time.LocalDateTime
 
-class ParkingLot(parkingCapacityConfig: ParkingCapacityConfig, private val hourlyParkingFeeRate: UInt) {
+class ParkingLot(parkingCapacityConfig: ParkingCapacityConfig, private val feeStrategy: FeeStrategy) {
     private val parkingSpots = ParkingSpotCollection(parkingCapacityConfig)
     private val tickets = TicketCollection()
 
-    private fun calculateFee(entryDateTime: LocalDateTime, exitDateTime: LocalDateTime): UInt {
-        val hoursParked = DateUtils.getTotalHoursBetween(entryDateTime, exitDateTime).toUInt()
-        return hoursParked * hourlyParkingFeeRate
-    }
 
     fun generateParkingTicket(vehicle: Vehicle, entryDateTime: LocalDateTime): Ticket {
         val availableParkingSpot = parkingSpots.getAvailableParkingSpotOrNull()
@@ -36,7 +32,7 @@ class ParkingLot(parkingCapacityConfig: ParkingCapacityConfig, private val hourl
         return Receipt(
             ticket = ticket,
             exitDateTime = exitDateTime,
-            fee = calculateFee(ticket.entryDateTime, exitDateTime)
+            fee = feeStrategy.calculateFee(ticket.entryDateTime, exitDateTime)
         )
     }
 }
