@@ -26,6 +26,8 @@ class ParkingLotTest {
         assertIs<UInt>(ticket.floorNumber)
         assertEquals(car.vehicleNumber, ticket.vehicleNumber)
         assertEquals(entryDateTime, ticket.entryDateTime)
+
+        Mockito.verifyZeroInteractions(feeStrategy)
     }
 
     @Test
@@ -40,6 +42,7 @@ class ParkingLotTest {
         assertThrows<ParkingSpotNotAvailableException> {
             parkingLot.generateParkingTicket(Car(), LocalDateTime.now())
         }
+        Mockito.verifyZeroInteractions(feeStrategy)
     }
 
     @MethodSource("getFeeCalculationTestCases")
@@ -54,6 +57,9 @@ class ParkingLotTest {
         val receipt = parkingLot.generateParkingFeeReceipt(vehicle, ticket.ticketNumber, exitDateTime)
 
         assertEquals(expectedParkingFee, receipt.fee)
+
+        Mockito.verify(feeStrategy, Mockito.times(1)).calculateFee(entryDateTime, exitDateTime)
+        Mockito.verifyNoMoreInteractions(feeStrategy)
     }
 
 
