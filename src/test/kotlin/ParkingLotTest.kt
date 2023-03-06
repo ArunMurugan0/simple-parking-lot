@@ -5,9 +5,11 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.Mockito
 import java.time.LocalDateTime
 import java.util.stream.Stream
 import kotlin.test.assertIs
+
 
 class ParkingLotTest {
 
@@ -15,7 +17,8 @@ class ParkingLotTest {
     fun `It should generate Ticket`() {
         val car = Car()
         val parkingCapacityConfig = ParkingCapacityConfig(parkingCapacityForEachFloor = listOf(1U, 2U))
-        val parkingLot = ParkingLot(parkingCapacityConfig, MallFeeStrategy(hourlyParkingFeeRate = 10U))
+        val feeStrategy: FeeStrategy = Mockito.mock(MallFeeStrategy::class.java)
+        val parkingLot = ParkingLot(parkingCapacityConfig, feeStrategy)
 
         val entryDateTime = LocalDateTime.now()
         val ticket = parkingLot.generateParkingTicket(car, entryDateTime)
@@ -28,7 +31,8 @@ class ParkingLotTest {
     @Test
     fun `It should throw exception if there is no parking spot available`() {
         val parkingCapacityConfig = ParkingCapacityConfig(parkingCapacityForEachFloor = listOf(3U))
-        val parkingLot = ParkingLot(parkingCapacityConfig, MallFeeStrategy(hourlyParkingFeeRate = 10U))
+        val feeStrategy: FeeStrategy = Mockito.mock(MallFeeStrategy::class.java)
+        val parkingLot = ParkingLot(parkingCapacityConfig, feeStrategy)
         parkingLot.generateParkingTicket(Car(), LocalDateTime.now())
         parkingLot.generateParkingTicket(Car(), LocalDateTime.now())
         parkingLot.generateParkingTicket(Car(), LocalDateTime.now())
@@ -42,8 +46,10 @@ class ParkingLotTest {
     @ParameterizedTest
     fun `it should calculate fee based on entry and exit datetime`(entryDateTime: LocalDateTime, exitDateTime: LocalDateTime, vehicle: Vehicle, expectedParkingFee: UInt) {
         val parkingCapacityConfig = ParkingCapacityConfig(parkingCapacityForEachFloor = listOf(10U))
-        val parkingLot = ParkingLot(parkingCapacityConfig, MallFeeStrategy(hourlyParkingFeeRate = 10U))
+        val feeStrategy: FeeStrategy = Mockito.mock(MallFeeStrategy::class.java)
+        val parkingLot = ParkingLot(parkingCapacityConfig, feeStrategy)
 
+        Mockito.doReturn(expectedParkingFee.toInt()).`when`(feeStrategy).calculateFee(entryDateTime, exitDateTime)
         val ticket = parkingLot.generateParkingTicket(vehicle, entryDateTime = entryDateTime)
         val receipt = parkingLot.generateParkingFeeReceipt(vehicle, ticket.ticketNumber, exitDateTime)
 
